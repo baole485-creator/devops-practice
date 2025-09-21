@@ -1,0 +1,16 @@
+name: Deploy Simulation
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy (simulation)
+        run: echo "Deploy version $GITHUB_REF"
