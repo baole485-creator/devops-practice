@@ -1,4 +1,4 @@
-name: CI
+name: Monorepo CI
 
 on:
   push:
@@ -7,14 +7,40 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      service1: ${{ steps.filter.outputs.service1 }}
+      service2: ${{ steps.filter.outputs.service2 }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            service1:
+              - 'service1/**'
+            service2:
+              - 'service2/**'
+
+  service1-tests:
+    needs: changes
+    if: needs.changes.outputs.service1 == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - run: npm install
+        working-directory: service1
+      - run: npm test
+        working-directory: service1
 
-      - name: Print secret length
-        run: |
-          echo "Secret length: ${#MY_TOKEN}"
-        env:
-          MY_TOKEN: ${{ secrets.MY_TOKEN }}
+  service2-tests:
+    needs: changes
+    if: needs.changes.outputs.service2 == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+        working-directory: service2
+      - run: npm test
+        working-directory: service2
