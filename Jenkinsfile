@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/baole485-creator/devops-practice'
+                git branch: 'main', url: 'https://github.com/baole485-creator/devops-practice.git'
             }
         }
 
